@@ -1,0 +1,3 @@
+[submodule "seathru_NeRF"]
+	path = seathru_NeRF
+	url = https://github.com/deborahLevy130/seathru_NeRF.git
