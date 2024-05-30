@@ -1,0 +1,6 @@
+[submodule "sa3d/self_prompting/dependencies/segment-anything"]
+	path = sa3d/self_prompting/dependencies/segment-anything
+	url = https://github.com/facebookresearch/segment-anything.git
+[submodule "sa3d/self_prompting/dependencies/GroundingDINO"]
+	path = sa3d/self_prompting/dependencies/GroundingDINO
+	url = https://github.com/IDEA-Research/GroundingDINO.git

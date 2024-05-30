@@ -1,0 +1,17 @@
+{
+  "experiment_name": "redsea-nerfacto",
+  "method_name": "nerfacto",
+  "checkpoint": "outputs\\redsea-nerfacto\\nerfacto\\2024-05-30_144132\\nerfstudio_models\\step-000029999.ckpt",
+  "results": {
+    "psnr": 17.363922119140625,
+    "psnr_std": 2.3398566246032715,
+    "ssim": 0.46441197395324707,
+    "ssim_std": 0.06524300575256348,
+    "lpips": 0.3788773715496063,
+    "lpips_std": 0.052412115037441254,
+    "num_rays_per_sec": 592185.875,
+    "num_rays_per_sec_std": 232986.875,
+    "fps": 0.4734419286251068,
+    "fps_std": 0.18626880645751953
+  }
+}

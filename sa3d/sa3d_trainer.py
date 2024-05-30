@@ -60,11 +60,12 @@ class SA3DTrainerConfig(TrainerConfig):
     """Number of steps between randomly sampled batches of rays."""
     steps_per_eval_image: int = 50000
     """Number of steps between single eval images."""
-    _target: Type = field(default_factory=lambda: SA3DTrainer)
-    """Use the SeaThruModel for SA3D."""
     enable_seathru: bool = False
-    """SeaThru pipeline temp."""
+    """Use the SeaThruModel for SA3D."""
+
     seathru_pipeline: SA3DSeathruPipelineConfig = field(default_factory=SA3DSeathruPipelineConfig)
+    _target: Type = field(default_factory=lambda: SA3DTrainer)
+
 
 
 class SA3DTrainer(Trainer):
@@ -73,8 +74,12 @@ class SA3DTrainer(Trainer):
     def __init__(self, config: SA3DTrainerConfig, local_rank: int = 0, world_size: int = 1) -> None:
         # This is to handle the seathru pipeline switch gracefully.
         if config.enable_seathru:
+            print("Switching to SeaThru Pipeline")
             assert config.seathru_pipeline is not None
-            self.config.pipeline = config.seathru_pipeline
+            # The Data Manager Must be the same
+            datamanager = config.pipeline.datamanager
+            config.pipeline = config.seathru_pipeline
+            config.pipeline.datamanager = datamanager
         super().__init__(config, local_rank, world_size)
 
         # reset button

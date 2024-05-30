@@ -21,6 +21,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Dict, Tuple, Type
 import torch
+from nerfstudio.configs.dataparser_configs import AnnotatedDataParserUnion
+from nerfstudio.data.dataparsers.colmap_dataparser import ColmapDataParserConfig
 from rich.progress import Console
 
 from nerfstudio.cameras.rays import RayBundle
@@ -38,6 +40,8 @@ class SA3DDataManagerConfig(VanillaDataManagerConfig):
     """Configuration for the SA3DDataManager."""
 
     _target: Type = field(default_factory=lambda: SA3DDataManager)
+    dataparser: AnnotatedDataParserUnion = field(default_factory=ColmapDataParserConfig)
+    """Specifies the dataparser used to unpack the data."""
     patch_size: int = 1
     """Size of patch to sample from. If >1, patch-based sampling will be used."""
 

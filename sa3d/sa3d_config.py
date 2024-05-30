@@ -45,7 +45,7 @@ original_pipeline = SA3DPipelineConfig(
             model=SA3DModelConfig(
                 mask_fields=TCNNMaskFieldConfig(
                     base_res=128,
-                    num_levels=12,
+                    num_levels=10,
                     max_res=1024,
                     log2_hashmap_size=19,
                     mask_threshold=1e-1
@@ -74,7 +74,7 @@ seathru_lite_pipeline = SA3DSeathruPipelineConfig(
             model=SA3DSeathruModelConfig(
                 mask_fields=TCNNMaskFieldConfig(
                     base_res=128,
-                    num_levels=12,
+                    num_levels=10,
                     max_res=2048,
                     log2_hashmap_size=19,
                     mask_threshold=1e-1
@@ -119,7 +119,7 @@ sa3d_method = MethodSpecification(
         max_num_iterations=17,
         save_only_latest_checkpoint=True,
         mixed_precision=False,
-        pipeline=original_pipeline,
+        pipeline=seathru_lite_pipeline,
         seathru_pipeline=seathru_lite_pipeline,
         enable_seathru=False,
         optimizers={
@@ -134,6 +134,7 @@ sa3d_method = MethodSpecification(
         },
         viewer=ViewerConfig(num_rays_per_chunk=1 << 15),
         vis="viewer",
+
     ),
     description="Segment Anything in 3D method",
 )

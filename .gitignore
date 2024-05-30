@@ -168,9 +168,6 @@ renders/
 # tensorboard log files
 events.out.*
 
-# Data
-data
-!*/data
 
 # Misc
 old/

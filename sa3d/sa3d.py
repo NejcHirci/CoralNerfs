@@ -94,7 +94,7 @@ class SA3DSeathruModel(SeathruModel):
             # Model should not be in training!!!!
             self.renderer_rgb.eval()
 
-            rgb, direct, _, _ = self.renderer_rgb(
+            rgb, direct, bs, J = self.renderer_rgb(
                 object_rgb=field_outputs[FieldHeadNames.RGB],
                 medium_rgb=field_outputs[SeathruHeadNames.MEDIUM_RGB],  # type: ignore
                 medium_bs=field_outputs[SeathruHeadNames.MEDIUM_BS],  # type: ignore
@@ -108,6 +108,9 @@ class SA3DSeathruModel(SeathruModel):
 
             outputs = {
                 "rgb": direct,  # We are using direct rendering instead of rgb here cause of Seathru
+                "direct": direct,
+                "bs": bs,
+                "J": J,
                 "accumulation": accumulation,
                 "depth": depth,
             }
@@ -156,9 +159,27 @@ class SA3DSeathruModel(SeathruModel):
                     mask = morphology.remove_small_objects(mask.cpu().numpy(), min_size=30, connectivity=1)
                     mask = torch.from_numpy(mask).to(outputs["rgb"].device)
                 outputs["rgb_masked"] = 0.6 * mask + 0.4 * outputs["rgb"].detach()
-                outputs["rgb_full_mask"] = (mask > 0.1) * outputs["rgb"].detach()
+                outputs["rgb_full_mask"] = mask * outputs["rgb"].detach()
+                # Just for extraction otherwise not to be used
+                # outputs["rgb"] = outputs["rgb_full_mask"]
 
         return outputs
+
+    def get_rgba_image(self, outputs: Dict[str, torch.Tensor], output_name: str = "rgb") -> torch.Tensor:
+        """Returns the RGBA image from the outputs of the model.
+
+        Args:
+            outputs: Outputs of the model.
+
+        Returns:
+            RGBA image.
+        """
+        accumulation_name = output_name.replace("rgb", "accumulation")
+        rgb = outputs[output_name]
+        acc = outputs[accumulation_name]
+        if acc.dim() < rgb.dim():
+            acc = acc.unsqueeze(-1)
+        return torch.cat((rgb / acc.clamp(min=1e-10), acc), dim=-1)
 
 
 @dataclass
@@ -263,5 +284,8 @@ class SA3DModel(NerfactoModel):
                     mask = morphology.remove_small_objects(mask.cpu().numpy(), min_size=30, connectivity=1)
                     mask = torch.from_numpy(mask).to(outputs["rgb"].device)
                 outputs["rgb_masked"] = 0.6*mask + 0.4*outputs["rgb"].detach()
+                outputs["rgb_full_mask"] = mask * outputs["rgb"].detach()
+                # Just for extraction otherwise not to be used
+                # outputs["rgb"] = outputs["rgb_full_mask"]
 
         return outputs

@@ -1,0 +1,17 @@
+{
+  "experiment_name": "sa3d-seathru",
+  "method_name": "sa3d",
+  "checkpoint": "outputs\\sa3d-seathru\\sa3d\\2024-05-30_195758\\nerfstudio_models\\step-000000016.ckpt",
+  "results": {
+    "psnr": 12.35983943939209,
+    "psnr_std": 0.20354114472866058,
+    "ssim": 0.44496434926986694,
+    "ssim_std": 0.04743654280900955,
+    "lpips": 0.8829933404922485,
+    "lpips_std": 0.0548630990087986,
+    "num_rays_per_sec": 153215.171875,
+    "num_rays_per_sec_std": 3600.4208984375,
+    "fps": 0.12249276041984558,
+    "fps_std": 0.0028784703463315964
+  }
+}

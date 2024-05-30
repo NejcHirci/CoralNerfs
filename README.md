@@ -1,58 +1,67 @@
-# Segment Anything🤖️ in 3D with NeRFs (SA3D)
-### [Project Page](https://jumpat.github.io/SA3D/) | [Arxiv Paper](https://arxiv.org/abs/2304.12308)
+# CoralNerfs
 
-[Segment Anything in 3D with NeRFs](https://arxiv.org/abs/2304.12308)  
-[Jiazhong Cen](https://github.com/Jumpat)\*<sup>1</sup>, [Zanwei Zhou](https://github.com/Zanue)\*<sup>1</sup>, [Jiemin Fang](https://jaminfong.cn/)<sup>2</sup>, [Chen Yang](https://github.com/chensjtu)<sup>1</sup>, [Wei Shen](https://shenwei1231.github.io/)<sup>1✉</sup>, [Lingxi Xie](http://lingxixie.com/)<sup>3</sup>, [Dongsheng Jiang](https://sites.google.com/site/dongshengjiangbme/)<sup>3</sup>, [Xiaopeng Zhang](https://sites.google.com/site/zxphistory/)<sup>3</sup>, [Qi Tian](https://scholar.google.com/citations?hl=en&user=61b6eYkAAAAJ)<sup>3</sup>   
-<sup>1</sup>AI Institute, SJTU &emsp; <sup>2</sup>School of EIC, HUST &emsp; <sup>3</sup>Huawei Inc.  
-\*denotes equal contribution  
+Source code for Coral NeRFs project for Differentiable Programming Course @ FRI 2023/24
 
-*Given a NeRF, just input prompts from **one single view** and then get your 3D model.*   
-<img src="imgs/SA3D.gif" width="800">
+This repository is largely based on existing work, but with a number of modifications and fixes in order 
+to be able to use the SA3D model with a SeaThruNeRF model and to support currently unsupported point input
+for the SA3D model.
 
-We propose a novel framework to Segment Anything in 3D, named <b>SA3D</b>. Given a neural radiance field (NeRF) model, SA3D allows users to obtain the 3D segmentation result of any target object via only <b>one-shot</b> manual prompting in a single rendered view. The entire process for obtaining the target 3D model can be completed in approximately 2 minutes, yet without any engineering optimization. Our experiments demonstrate the effectiveness of SA3D in different scenes, highlighting the potential of SAM in 3D scene perception. 
+## Authors
 
-## Update
-* **2023/11/11**: We release the nerfstudio version of SA3D. Currently it only supports the text prompt as input.
-* **2023/06/29**: We now support [MobileSAM](https://github.com/ChaoningZhang/MobileSAM) as the segmentation network. Follow the installation instruction in [MobileSAM](https://github.com/ChaoningZhang/MobileSAM), and then download *mobile_sam.pt* into folder ``./dependencies/sam_ckpt``. You can use `--mobile_sam` to switch to MobileSAM.
+- [Nejc Hirci](https://github.com/NejcHirci)
 
-## Overall Pipeline
+## Credits
 
-![SA3D_pipeline](https://github.com/Jumpat/SegmentAnythingin3D/assets/58475180/6135f473-3239-4721-9a79-15f7a7d11347)
+This project is based on the following projects:
 
-With input prompts, SAM cuts out the target object from the according view. The obtained 2D segmentation mask is projected onto 3D mask grids via density-guided inverse rendering. 2D masks from other views are then rendered, which are mostly uncompleted but used as cross-view self-prompts to be fed into SAM again. Complete masks can be obtained and projected onto mask grids. This procedure is executed via an iterative manner while accurate 3D masks can be finally learned. SA3D can adapt to various radiance fields effectively without any additional redesigning.
+- Initial [SA3D model implementation for Nerfstudio](https://github.com/Jumpat/SegmentAnythingin3D/tree/nerfstudio-version) by [Jumpat](https://github.com/Jumpat)
+- [UIESS model implementation](https://github.com/fordevoted/UIESS) by [fordevoted](https://github.com/fordevoted)
+- [SeaThruNeRF model implementation for Nerfstudio](https://github.com/AkerBP/seathru_nerf) by [AkerBP](https://github.com/AkerBP)
 
+## Project Idea
 
-## Installation
+Goal to test out the SA3D model for extracting objects from a scene with a pretrained NeRF model in particular on coral reef scenes. 
+The idea is also to test out different possible pipelines for extracting individual objects and possibly see how well the models can be converted to an actual mesh.
+
+## Installation Guide
+
+### SAM3D Steps
 
 ```bash
-git clone https://github.com/Jumpat/SegmentAnythingin3D.git
-cd SegmentAnythingin3D
+git clone --recursive https://github.com/NejcHirci/CoralNerfs
+cd CoralNerfs
 
-conda create -n sa3d python=3.10
-pip install -r requirements.txt
+conda create -n coralnerfs python=3.10
+conda activate coralnerfs
 ```
 
 ### NeRFStudio
-Follow [this guidance](https://docs.nerf.studio/quickstart/installation.html) to install nerfstudio.
 
-Note: We developed our code under `nerfstudio==0.2.0`.
+Following steps are also covered in the [NeRFStudio documentation](https://docs.nerf.studio/quickstart/installation.html).
+
+```bash
+python -m pip install --upgrade pip
+pip install torch==2.1.2+cu118 torchvision==0.16.2+cu118 --extra-index-url https://download.pytorch.org/whl/cu118
+conda install -c "nvidia/label/cuda-11.8.0" cuda-toolkit
+pip install ninja git+https://github.com/NVlabs/tiny-cuda-nn/#subdirectory=bindings/torch
+pip install nerfstudio
+```
 
 ### SAM and Grounding-DINO:
 
 ```bash
-cd sa3d/self_prompting; # now the folder 'dependencies' is under 'sa3d/self_prompting';
+cd sa3d/self_prompting/dependencies; # now the folder 'dependencies' is under 'sa3d/self_prompting';
 
-# Installing SAM
-mkdir dependencies; cd dependencies 
-mkdir sam_ckpt; cd sam_ckpt
+# Download SAM_ckpt
+cd sam_ckpt
+# If you have problems with wget you can also download the file manually from the link below
 wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
-git clone git@github.com:facebookresearch/segment-anything.git 
 cd segment-anything; pip install -e .
 
 # Installing Grounding-DINO
-git clone https://github.com/IDEA-Research/GroundingDINO.git
 cd GroundingDINO/; pip install -e .
 mkdir weights; cd weights
+# If you have problems with wget you can also download the file manually from the link below
 wget https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
 ```
 
@@ -62,42 +71,45 @@ In the root directory of this repo, conduct
 pip install -e .
 ```
 
-## Usage
-- Train NeRF
-  ```bash
-  ns-train nerfacto --load-data {data-dir}
-  ```
-- Run SA3D
-  ```bash
-  ns-train sa3d --data {data-dir} \
-    --load-dir {ckpt-dir} \
-    --pipeline.text_prompt {text-prompt} \
-    --pipeline.network.num_prompts {num-prompts} \
-  ```
-- Render and Save Fly-through Videos
-  ```bash
-  ns-viewer --load-config {config-dir}
-  ```
+### SeaThruNeRF steps
 
-## Some Visualization Samples
-
-SA3D can handle various scenes for 3D segmentation. Find more demos in our [project page](https://jumpat.github.io/SA3D/).
-
-
-## Acknowledgements
-Thanks for the following project for their valuable contributions:
-- [Segment Anything](https://github.com/facebookresearch/segment-anything)
-- [DVGO](https://github.com/sunset1995/DirectVoxGO)
-- [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO.git)
-- [nerfstudio](https://github.com/nerfstudio-project/nerfstudio)
-
-## Citation
-If you find this project helpful for your research, please consider citing the report and giving a ⭐.
-```BibTex
-@inproceedings{cen2023segment,
-      title={Segment Anything in 3D with NeRFs}, 
-      author={Jiazhong Cen and Zanwei Zhou and Jiemin Fang and Chen Yang and Wei Shen and Lingxi Xie and Dongsheng Jiang and Xiaopeng Zhang and Qi Tian},
-      booktitle    = {NeurIPS},
-      year         = {2023},
-}
+```bash
+pip install git+https://github.com/AkerBP/seathru_nerf
 ```
+
+### UIESS steps
+
+Add the following packages
+```bash
+pip install seaborn scikit-learn
+```
+
+## Usage
+
+### Training 
+
+For training all 3 NeRF models, you can use the script `scripts/train_models.sh` which will train the 3 models
+on the provided datasets.
+
+Afterward you can train the 3 SA3D models with the script `scripts/train_sa3d.sh`, but NEED TO CORRECT
+the paths to the trained models in the script.
+
+Note: At the start of training the script will plot the initial SAM mask to make sure we are training the correct object.
+The point prompts can be given in `sa3d/sa3d_config.py` in the `point_prompt` variable.
+
+### Testing
+
+To view the results of the model used the established Nerfstudio viewer with providing the path to the trained
+model config file.
+```bash
+ns-viewer --load-config {config-dir}
+```
+
+## TODO
+
+- [x] Prepare a custom dataset that has distinct corals.
+- [x] Train a SeaThruNeRFmodel on the dataset.
+- [x] Train a baseline Nerfacto model on data processed with UIE and a baseline Nerfacto.
+- [x] Extract individual corals using the SA3D model from each of the models.
+- [ ] Convert the extracted corals to a mesh.
+- [ ] Evaluate the quality of the extracted mesh.

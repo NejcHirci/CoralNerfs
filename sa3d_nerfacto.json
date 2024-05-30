@@ -1,0 +1,17 @@
+{
+  "experiment_name": "sa3d-nerfacto",
+  "method_name": "sa3d",
+  "checkpoint": "outputs\\sa3d-nerfacto\\sa3d\\2024-05-30_183105\\nerfstudio_models\\step-000000016.ckpt",
+  "results": {
+    "psnr": 11.979691505432129,
+    "psnr_std": 0.8515640497207642,
+    "ssim": 0.26944807171821594,
+    "ssim_std": 0.08209868520498276,
+    "lpips": 0.7352457642555237,
+    "lpips_std": 0.028172247111797333,
+    "num_rays_per_sec": 188376.34375,
+    "num_rays_per_sec_std": 5668.78955078125,
+    "fps": 0.1506034880876541,
+    "fps_std": 0.00453209038823843
+  }
+}

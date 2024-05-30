@@ -1,0 +1,17 @@
+{
+  "experiment_name": "redsea-seathrunerf",
+  "method_name": "seathru-nerf-lite",
+  "checkpoint": "outputs\\redsea-seathrunerf\\seathru-nerf-lite\\2024-05-29_153452\\nerfstudio_models\\step-000029999.ckpt",
+  "results": {
+    "psnr": 23.22616195678711,
+    "psnr_std": 3.4026038646698,
+    "ssim": 0.833157479763031,
+    "ssim_std": 0.08870932459831238,
+    "lpips": 0.1759352833032608,
+    "lpips_std": 0.05648418515920639,
+    "num_rays_per_sec": 531876.75,
+    "num_rays_per_sec_std": 82844.1015625,
+    "fps": 0.4252258539199829,
+    "fps_std": 0.0662323608994484
+  }
+}
