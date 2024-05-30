@@ -188,5 +188,5 @@ camera_paths/
 ._.DS_Store
 */**/.DS_Store
 */**/._.DS_Store
-
+*/**/__pycache/
 sa3d/self_prompting/dependencies/sam_ckpt/
